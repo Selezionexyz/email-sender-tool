@@ -70,7 +70,12 @@ let failedEmails = [];
 document.addEventListener('DOMContentLoaded', function() {
     // Charger la configuration depuis localStorage
     loadConfig();
-    
+    // Générer un pixel de tracking gratuit
+function generateTrackingPixel(email) {
+    const encodedEmail = encodeURIComponent(email);
+    // Option Statcounter (créez d'abord un compte gratuit)
+    return `<img src="https://c.statcounter.com/12345678/0/${encodedEmail}/1/" alt="" style="border:none;margin:0;padding:0;width:1px;height:1px;">`;
+}
     // Afficher la liste des destinataires
     displayRecipientList();
     
@@ -178,12 +183,9 @@ async function sendEmail(email, templateContent, subject) {
     const firstName = extractFirstName(email);
     const message = templateContent.replace(/{{prenom}}/gi, firstName);
     
-    // Générer un ID unique pour le tracking
-    const trackingId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    // Ajouter le pixel de tracking (1x1 transparent)
-    const trackingPixel = `<img src="https://emailjs.com/api/v1.0/tracking/pixel/${trackingId}" width="1" height="1" style="display:none;" />`;
-    const messageWithTracking = message + trackingPixel;
+    // NOUVEAU CODE
+const trackingPixel = generateTrackingPixel(email);
+const messageWithTracking = message + trackingPixel;
     
     const templateParams = {
         to_email: email,
